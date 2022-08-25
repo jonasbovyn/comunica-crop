@@ -11,6 +11,7 @@ export class ActorRdfJoinNestedLoop extends ActorRdfJoin {
   public constructor(args: IActorRdfJoinArgs) {
     super(args, {
       logicalType: 'inner',
+      physicalType: 'nested-loop',
       physicalName: 'nested-loop',
       limitEntries: 2,
       canHandleUndefs: true,

@@ -17,6 +17,7 @@ export class ActorRdfJoinMinusHashUndef extends ActorRdfJoin {
   public constructor(args: IActorRdfJoinArgs) {
     super(args, {
       logicalType: 'minus',
+      physicalType: 'hash',
       physicalName: 'hash-undef',
       limitEntries: 2,
       canHandleUndefs: true,

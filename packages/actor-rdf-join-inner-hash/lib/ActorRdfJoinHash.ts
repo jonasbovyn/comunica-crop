@@ -12,6 +12,7 @@ export class ActorRdfJoinHash extends ActorRdfJoin {
   public constructor(args: IActorRdfJoinArgs) {
     super(args, {
       logicalType: 'inner',
+      physicalType: 'hash',
       physicalName: 'hash',
       limitEntries: 2,
     });

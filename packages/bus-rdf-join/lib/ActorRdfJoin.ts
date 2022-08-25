@@ -35,6 +35,7 @@ export abstract class ActorRdfJoin
    */
   public includeInLogs = true;
   public readonly logicalType: LogicalJoinType;
+  public readonly physicalType?: PhysicalJoinType;
   public readonly physicalName: string;
   /**
    * Can be used by subclasses to indicate the max or min number of streams that can be joined.
@@ -59,6 +60,7 @@ export abstract class ActorRdfJoin
   public constructor(args: IActorRdfJoinArgs, options: IActorRdfJoinInternalOptions) {
     super(args);
     this.logicalType = options.logicalType;
+    this.physicalType = options.physicalType ?? undefined;
     this.physicalName = options.physicalName;
     this.limitEntries = options.limitEntries ?? Number.POSITIVE_INFINITY;
     this.limitEntriesMin = options.limitEntriesMin ?? false;
@@ -223,6 +225,11 @@ export abstract class ActorRdfJoin
       throw new Error(`${this.name} can only handle logical joins of type '${this.logicalType}', while '${action.type}' was given.`);
     }
 
+    // Validate physical join operation type
+    if (action.physicalType !== undefined && action.physicalType !== this.physicalType) {
+      throw new Error(`${this.name} can only handle physical joins of operation type '${this.physicalType}', while '${action.physicalType}' was given.`);
+    }
+
     // Don't allow joining of one or zero streams
     if (action.entries.length <= 1) {
       throw new Error(`${this.name} requires at least two join entries.`);
@@ -334,6 +341,10 @@ export interface IActorRdfJoinInternalOptions {
    */
   logicalType: LogicalJoinType;
   /**
+   * The physical join operator type this actor implements or shares the complexity of.
+   */
+  physicalType?: PhysicalJoinType;
+  /**
    * The physical name of join operation this actor implements.
    * This is used for debug and query plan logs.
    */
@@ -362,11 +373,20 @@ export interface IActorRdfJoinInternalOptions {
  */
 export type LogicalJoinType = 'inner' | 'optional' | 'minus';
 
+/**
+ * Represents a physical join operator type.
+ */
+export type PhysicalJoinType = 'hash' | 'symmetric-hash' | 'nested-loop' | 'merge' | 'bind';
+
 export interface IActionRdfJoin extends IAction {
   /**
    * The logical join type.
    */
   type: LogicalJoinType;
+  /**
+   * The logical join type.
+   */
+  physicalType?: PhysicalJoinType;
   /**
    * The array of streams to join.
    */

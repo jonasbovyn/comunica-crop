@@ -28,6 +28,7 @@ export class ActorRdfJoinMultiBind extends ActorRdfJoin {
   public constructor(args: IActorRdfJoinMultiBindArgs) {
     super(args, {
       logicalType: 'inner',
+      physicalType: 'bind',
       physicalName: 'bind',
       canHandleUndefs: true,
     });

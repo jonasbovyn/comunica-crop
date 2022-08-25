@@ -95,6 +95,5 @@
   },
   "resolutions": {
     "@rdfjs/types": "1.1.0"
-  },
-  "dependencies": {}
+  }
 }

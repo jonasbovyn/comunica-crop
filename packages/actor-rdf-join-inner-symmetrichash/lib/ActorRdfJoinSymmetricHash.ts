@@ -11,6 +11,7 @@ export class ActorRdfJoinSymmetricHash extends ActorRdfJoin {
   public constructor(args: IActorRdfJoinArgs) {
     super(args, {
       logicalType: 'inner',
+      physicalType: 'symmetric-hash',
       physicalName: 'symmetric-hash',
       limitEntries: 2,
     });

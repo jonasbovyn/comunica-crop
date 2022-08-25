@@ -1,3 +1,4 @@
+import type { IQueryPlan } from '@comunica/actor-rdf-join-crop/lib/crop/QueryPlan';
 import type * as RDF from '@rdfjs/types';
 import type { IDataDestination } from './IDataDestination';
 import type { IDataSource } from './IDataSource';
@@ -43,4 +44,6 @@ export interface IQueryContextCommon {
   => ((args: RDF.Term[]) => Promise<RDF.Term>) | undefined;
   extensionFunctions?: Record<string, (args: RDF.Term[]) => Promise<RDF.Term>>;
   explain?: QueryExplainMode;
+  benchmarkTimeLog?: (id: string, elapsedTime: number) => void;
+  overrideCropSettings?: { k?: number; t?: number; mode?: 'js' | 'wasm'; plan?: IQueryPlan; skipEval?: boolean };
 }

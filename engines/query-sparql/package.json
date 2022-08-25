@@ -106,6 +106,7 @@
     "@comunica/actor-query-result-serialize-stats": "^2.3.0",
     "@comunica/actor-query-result-serialize-table": "^2.3.0",
     "@comunica/actor-query-result-serialize-tree": "^2.3.0",
+    "@comunica/actor-rdf-join-crop": "^2.3.0",
     "@comunica/actor-rdf-join-entries-sort-cardinality": "^2.3.0",
     "@comunica/actor-rdf-join-inner-hash": "^2.3.0",
     "@comunica/actor-rdf-join-inner-multi-bind": "^2.3.0",

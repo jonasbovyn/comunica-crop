@@ -3483,10 +3483,10 @@ asynciterator@^3.2.0, asynciterator@^3.4.2:
   resolved "https://registry.yarnpkg.com/asynciterator/-/asynciterator-3.4.2.tgz#2f82219a0d3ee97f33f9f586f8fb089ed2e6fc15"
   integrity sha512-/Mz31ZSFJFIFIf2LoOrVlSDyIzBKkXc3F9e5/4mspmvsP1njGK5V1mznLjaugRFhdmTswfJW5yOQqUKkvqH/mg==
 
-asyncjoin@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/asyncjoin/-/asyncjoin-1.0.5.tgz#65b537ef97dc2d727ff43c91c1e60bc2eb8795ee"
-  integrity sha512-yRNu4POPpxKH/dMW0e6XyXflFaTYZRib3rdVMkJb8Zb2toT7v3ZjTmR5oEPB8vvNfxGwCuiS7fLMZq/uWoOx2Q==
+asyncjoin@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/asyncjoin/-/asyncjoin-1.0.6.tgz#8d5f09b55f1f22687ac9fb55c58e3074dc3e4ef5"
+  integrity sha512-W+z8xy8+yFp4tjopZfhPtJSzUmOOyKeCLZwQrDPbD5YZJuRS73ukQkhclReCkBpBe0ZFAOLl59Z/AoXuFJELcA==
   dependencies:
     asynciterator "^3.2.0"
 
@@ -6583,6 +6583,11 @@ hash.js@^1.0.0, hash.js@^1.0.3, hash.js@^1.1.7:
   dependencies:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
+
+heap-js@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/heap-js/-/heap-js-2.2.0.tgz#f4418874cd2aedc2cf3a7492d579afe23b627c5d"
+  integrity sha512-G3uM72G9F/zo9Hph/T7m4ZZVlVu5bx2f5CiCS78TBHz2mNIXnB5KRdEEYssXZJ7ldLDqID29bZ1D5ezCKQD2Zw==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"

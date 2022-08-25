@@ -1,3 +1,4 @@
+import type { IQueryPlan } from '@comunica/actor-rdf-join-crop/lib/crop/QueryPlan';
 import { ActionContextKey, CONTEXT_KEY_LOGGER } from '@comunica/core';
 import type { Bindings,
   IPhysicalQueryPlanLogger,
@@ -135,6 +136,14 @@ export const KeysInitQuery = {
   physicalQueryPlanLogger: new ActionContextKey<IPhysicalQueryPlanLogger>(
     '@comunica/actor-init-query:physicalQueryPlanLogger',
   ),
+  benchmarkTimeLog: new ActionContextKey<(id: string, elapsedTime: number) => void
+  // eslint-disable-next-line @typescript-eslint/no-extra-parens
+  >('@comunica/actor-init-query:benchmarkTimeLog'),
+
+  overrideCropSettings: new ActionContextKey< { k?: number; t?: number;
+    mode?: 'js' | 'wasm'; plan?: IQueryPlan; skipEval?: boolean; }
+  >('@comunica/actor-init-query:overrideCropSettings'),
+
   /**
    * The current physical operator within the query plan.
    *              This is used to pass parent-child relationships for invoking the query plan logger.
