@@ -63,7 +63,7 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
   private readonly hashType: PhysicalJoinType = 'symmetric-hash';
   private readonly nestedLoopType: PhysicalJoinType = 'nested-loop';
 
-  private context: IActionContext;
+  private static context: IActionContext;
 
   public constructor(args: IActorRdfJoinCropArgs) {
     super(args, {
@@ -100,7 +100,7 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
 
   protected async getOutput(action: IActionRdfJoin): Promise<IActorRdfJoinOutputInner> {
     const context = action.context;
-    this.context = context;
+    ActorRdfJoinCrop.context = context;
     const entries: IJoinEntry[] = [ ...action.entries ];
 
     let cropSettings: ICropSettings = { k: this.k, t: this.t, mode: this.mode, skipEval: false };
@@ -133,7 +133,7 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
 
     const bestPlan = selectRobustPlan(bestPlans, this.robustnessThreshold, this.costThreshold, entries, metadatas);
 
-    this.benchmarkTime('crop-idp', start);
+    ActorRdfJoinCrop.benchmarkTime('crop-idp', start);
 
     const dataFactory = new DataFactory();
     let output: IQueryOperationResultBindings;
@@ -166,32 +166,34 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
   }
 
   private async instantiateWasm(context: IActionContext): Promise<void> {
-    if (this.wasmInstance === undefined) {
-      const start = process.hrtime.bigint();
+    // Re instantiate every time, to perform proper 'reset' memory benchmark
 
-      const wasmBuffer = await fs.readFile(path.resolve(__dirname, 'wasm/bin/cropcpp.wasm'));
+    // If (this.wasmInstance === undefined) {
+    const start = process.hrtime.bigint();
 
-      const wasiConfig = new WASI({
-        args: argv,
-        env,
-      });
+    const wasmBuffer = await fs.readFile(path.resolve(__dirname, 'wasm/bin/cropcppsmaller.wasm'));
 
-      const wasmConfig = {
-        wasi_snapshot_preview1: wasiConfig.wasiImport,
-        env: {
-          // https://github.com/WebAssembly/WASI/issues/82
-          // eslint-disable-next-line @typescript-eslint/no-empty-function
-          emscripten_notify_memory_growth(index: number) { },
-        },
-      };
+    const wasiConfig = new WASI({
+      args: argv,
+      env,
+    });
 
-      const wasmModule = await WebAssembly.instantiate(wasmBuffer, wasmConfig);
-      wasiConfig.initialize(wasmModule.instance);
+    const wasmConfig = {
+      wasi_snapshot_preview1: wasiConfig.wasiImport,
+      env: {
+        // https://github.com/WebAssembly/WASI/issues/82
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        emscripten_notify_memory_growth(index: number) { },
+      },
+    };
 
-      this.wasmInstance = wasmModule;
+    const wasmModule = await WebAssembly.instantiate(wasmBuffer, wasmConfig);
+    wasiConfig.initialize(wasmModule.instance);
 
-      this.benchmarkTime('optimization-time', start);
-    }
+    this.wasmInstance = wasmModule;
+
+    ActorRdfJoinCrop.benchmarkTime('optimization-time', start);
+    // }
   }
 
   private async getOutputWasm(action: IActionRdfJoin, settings: ICropSettings): Promise<IQueryPlan[]> {
@@ -219,7 +221,7 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
     };
   }
 
-  private benchmarkTime(id: string, start: bigint): void {
+  private static benchmarkTime(id: string, start: bigint): void {
     // Cut off macroseconds
     const elapsedTimeBigint = (process.hrtime.bigint() - start) / BigInt(1_000);
     // Convert to miliseconds with decimal point
@@ -227,9 +229,9 @@ export class ActorRdfJoinCrop extends ActorRdfJoin {
     this.benchmark(id, elapsedTime);
   }
 
-  private benchmark(id: string, log: number): void {
-    if (this.context.has(KeysInitQuery.benchmarkTimeLog)) {
-      const benchmarkTimeLog: (id: string, elapsedTime: number) => void = this.context
+  public static benchmark(id: string, log: number): void {
+    if (ActorRdfJoinCrop.context.has(KeysInitQuery.benchmarkTimeLog)) {
+      const benchmarkTimeLog: (id: string, elapsedTime: number) => void = ActorRdfJoinCrop.context
         .get(KeysInitQuery.benchmarkTimeLog)!;
       benchmarkTimeLog(id, log);
     }

@@ -3,6 +3,7 @@
 /* global BigInt */
 
 import type { MetadataBindings } from '@comunica/types';
+import { ActorRdfJoinCrop } from '../ActorRdfJoinCrop';
 import type { IQueryPlan } from '../crop/QueryPlan';
 import { WasmPlansDeserializer } from './deserializer/WasmPlansDeserializer';
 
@@ -52,6 +53,9 @@ export class WasmIdpFindPlan {
   }
 
   public findPlan(k: number, t: number): IQueryPlan[] {
+    // Global.gc();
+    // const initialMem = process.memoryUsage().heapUsed;
+
     const metadatasAddress = this.createMetadatas();
 
     // // eslint-disable-next-line no-console
@@ -64,6 +68,14 @@ export class WasmIdpFindPlan {
 
     const deserializer = new WasmPlansDeserializer(this.wasmExports.memory, resultsAddress);
     const result = deserializer.deserializePlans();
+
+    // Wasm memory is never shrunk, only growing, so it's fine to only check once
+    // const memUsage = process.memoryUsage();
+    // // eslint-disable-next-line no-console
+    // console.log(memUsage);
+    // ActorRdfJoinCrop.benchmark('crop-memory', memUsage.heapUsed - initialMem);
+
+    ActorRdfJoinCrop.benchmark('crop-memory', this.wasmExports.memory.buffer.byteLength);
 
     this.wasmExports.free(resultsAddress);
     this.wasmExports.free(metadatasAddress);

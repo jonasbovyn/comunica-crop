@@ -3,6 +3,7 @@
 /* global BigInt */
 import type { IJoinEntry, MetadataBindings } from '@comunica/types';
 import { Heap } from 'heap-js';
+import { ActorRdfJoinCrop } from '../../ActorRdfJoinCrop';
 import { allIdpQueryOperators, QueryOperator } from '../QueryOperator';
 import type { IdpQueryPlan } from './IdpQueryPlan';
 import { IdpQueryLeaf, IdpQueryNode } from './IdpQueryPlan';
@@ -93,6 +94,10 @@ export class IdpFindPlan {
    * @param t
    */
   public findPlan(k: number, t: number): IdpQueryPlan[] {
+    global.gc();
+    const initialMem = process.memoryUsage().heapUsed;
+    let highestMem = initialMem;
+
     this.currentNodeIndex = 0;
 
     // OptPlans is indexed with bitmasks of the selection
@@ -155,6 +160,13 @@ export class IdpFindPlan {
         }
       }
 
+      // Global.gc();
+      // Mem usage is at its peak here
+      const memUsage = process.memoryUsage();
+      if (memUsage.heapUsed > highestMem) {
+        highestMem = memUsage.heapUsed;
+      }
+
       // Find the best plan with length K
       let indicesV: number[] | undefined = firstKSubset(k);
       let bestV: number[];
@@ -192,6 +204,8 @@ export class IdpFindPlan {
 
       nextSymbol += 1;
     }
+
+    ActorRdfJoinCrop.benchmark('crop-memory', highestMem - initialMem);
 
     const key = [ ...optPlans.keys() ][0];
     this.prunePlans(key, optPlans, t);
